@@ -1,0 +1,2 @@
+# analizator
+Analizator meczów piłkarskich
