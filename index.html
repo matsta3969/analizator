@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0f1117">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Analizator Meczów">
+<title>Analizator Meczów</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0f1117; color: #e0e0e0; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+  .topbar { background: #161920; border-bottom: 1px solid #2a2d3a; padding: 12px 16px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .topbar h1 { font-size: 1em; color: #fff; flex: 1; }
+  .topbar .status { font-size: 0.72em; color: #555; }
+  .spinner-inline { width: 14px; height: 14px; border: 2px solid #333; border-top-color: #5aacf5; border-radius: 50%; animation: spin 0.8s linear infinite; display: none; }
+  .spinner-inline.active { display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .search-bar { padding: 10px 12px; background: #161920; border-bottom: 1px solid #2a2d3a; display: flex; gap: 8px; flex-shrink: 0; }
+  .search-bar input { flex: 1; background: #0f1117; border: 1px solid #2a2d3a; border-radius: 10px; padding: 10px 14px; color: #e0e0e0; font-size: 0.9em; outline: none; }
+  .search-bar input:focus { border-color: #3a6abf; }
+  .search-bar input::placeholder { color: #444; }
+  .btn-analyze { background: #2a5abf; color: #fff; border: none; border-radius: 10px; padding: 10px 16px; font-size: 0.88em; font-weight: 600; cursor: pointer; white-space: nowrap; }
+  .btn-analyze:active { background: #1a4aaf; }
+  .btn-analyze:disabled { background: #333; color: #666; }
+  .tabs { display: flex; background: #161920; border-bottom: 1px solid #2a2d3a; flex-shrink: 0; }
+  .tab { flex: 1; padding: 11px 8px; text-align: center; font-size: 0.82em; color: #555; cursor: pointer; border-bottom: 2px solid transparent; display: flex; align-items: center; justify-content: center; gap: 5px; }
+  .tab.active { color: #5aacf5; border-bottom-color: #5aacf5; }
+  .panel { flex: 1; overflow-y: auto; display: none; padding: 12px; }
+  .panel.active { display: block; }
+  .chat-panel { flex: 1; overflow: hidden; display: none; flex-direction: column; }
+  .chat-panel.active { display: flex; }
+  .chat-messages { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+  .msg { max-width: 85%; padding: 10px 13px; border-radius: 14px; font-size: 0.88em; line-height: 1.5; }
+  .msg.bot { background: #1e2130; color: #ddd; align-self: flex-start; border-bottom-left-radius: 4px; }
+  .msg.user { background: #2a5abf; color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+  .msg.bot strong { color: #5aacf5; }
+  .quick-qs { padding: 6px 12px 8px; display: flex; gap: 6px; overflow-x: auto; flex-shrink: 0; scrollbar-width: none; }
+  .quick-qs::-webkit-scrollbar { display: none; }
+  .qq { background: #1e2130; border: 1px solid #2a2d3a; border-radius: 14px; padding: 6px 12px; font-size: 0.75em; color: #aaa; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+  .qq:active { background: #2a3a5a; }
+  .chat-input-row { padding: 10px 12px; border-top: 1px solid #2a2d3a; display: flex; gap: 8px; flex-shrink: 0; background: #161920; }
+  .chat-input-row input { flex: 1; background: #0f1117; border: 1px solid #2a2d3a; border-radius: 10px; padding: 10px 13px; color: #e0e0e0; font-size: 0.88em; outline: none; }
+  .chat-input-row input:focus { border-color: #3a6abf; }
+  .chat-input-row input::placeholder { color: #444; }
+  .btn-send { background: #2a5abf; color: #fff; border: none; border-radius: 10px; padding: 10px 16px; font-size: 1em; cursor: pointer; }
+  .btn-send:active { background: #1a4aaf; }
+  .btn-send:disabled { background: #333; color: #666; }
+  .match-card { background: #161920; border: 1px solid #2a2d3a; border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+  .match-card h2 { font-size: 1.1em; color: #fff; margin-bottom: 3px; }
+  .match-meta { font-size: 0.78em; color: #555; margin-bottom: 14px; }
+  .data-badge { display: inline-block; background: #0d2a0d; border: 1px solid #1a5a1a; color: #2ecc71; font-size: 0.68em; padding: 2px 6px; border-radius: 8px; margin-left: 6px; }
+  .chances-row { display: flex; gap: 8px; margin-bottom: 14px; }
+  .chance-box { flex: 1; background: #0f1117; border-radius: 10px; padding: 12px 8px; text-align: center; border: 1px solid #2a2d3a; }
+  .chance-box .label { font-size: 0.7em; color: #666; margin-bottom: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chance-box .pct { font-size: 1.4em; font-weight: bold; }
+  .chance-box .bar-wrap { background: #2a2d3a; border-radius: 4px; height: 4px; margin-top: 6px; overflow: hidden; }
+  .chance-box .bar { height: 4px; border-radius: 4px; }
+  .c1 .pct { color: #5aacf5; } .c1 .bar { background: #5aacf5; }
+  .cx .pct { color: #f5c34a; } .cx .bar { background: #f5c34a; }
+  .c2 .pct { color: #f5614a; } .c2 .bar { background: #f5614a; }
+  .verdict-box { background: #0d1f14; border: 1px solid #1e5c2a; border-radius: 10px; padding: 14px; margin-bottom: 12px; }
+  .verdict-box h3 { font-size: 0.75em; color: #2ecc71; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 7px; }
+  .verdict-tip { font-size: 1em; font-weight: bold; color: #fff; margin-bottom: 4px; }
+  .verdict-sub { font-size: 0.8em; color: #aaa; line-height: 1.6; }
+  .info-box { background: #0f1117; border: 1px solid #2a2d3a; border-radius: 10px; padding: 13px; margin-bottom: 10px; }
+  .info-box h3 { font-size: 0.75em; color: #555; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 9px; }
+  .info-row { display: flex; justify-content: space-between; font-size: 0.82em; padding: 5px 0; border-bottom: 1px solid #1e2130; }
+  .info-row:last-child { border-bottom: none; }
+  .info-row .k { color: #666; }
+  .info-row .v { color: #fff; font-weight: 500; }
+  .v.red { color: #e74c3c; } .v.green { color: #2ecc71; } .v.yellow { color: #f39c12; }
+  .form-dots { display: flex; gap: 5px; margin-top: 6px; }
+  .fd { width: 26px; height: 26px; border-radius: 50%; display:flex; align-items:center; justify-content:center; font-size:0.72em; font-weight:bold; }
+  .fw { background:#27ae60; color:#fff; } .fdraw { background:#f39c12; color:#fff; } .fl { background:#e74c3c; color:#fff; } .fq { background:#333; color:#666; }
+  .odds-grid { display: flex; gap: 8px; margin-bottom: 12px; }
+  .odds-cell { flex: 1; background: #0f1117; border: 1px solid #2a2d3a; border-radius: 8px; padding: 10px 6px; text-align: center; }
+  .odds-cell .oc-label { font-size: 0.68em; color: #666; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .odds-cell .oc-fair { font-size: 1.15em; font-weight: bold; color: #fff; }
+  .odds-cell .oc-sub { font-size: 0.68em; color: #555; margin-top: 2px; }
+  .sts-section h4 { font-size: 0.78em; color: #aaa; margin-bottom: 10px; }
+  .sts-inputs { display: flex; gap: 8px; margin-bottom: 10px; }
+  .sts-input-group { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+  .sts-input-group label { font-size: 0.68em; color: #666; text-align: center; }
+  .sts-input-group input { background: #0f1117; border: 1px solid #2a2d3a; border-radius: 8px; padding: 9px 6px; color: #fff; font-size: 0.88em; text-align: center; outline: none; width: 100%; }
+  .sts-input-group input:focus { border-color: #3a6abf; }
+  .btn-check-value { width: 100%; background: #2a5abf; color: #fff; border: none; border-radius: 8px; padding: 11px; font-size: 0.88em; font-weight: 600; cursor: pointer; margin-bottom: 10px; }
+  .btn-check-value:active { background: #1a4aaf; }
+  .value-result { border-radius: 8px; padding: 12px; font-size: 0.83em; line-height: 1.6; display: none; }
+  .value-result.value-bet { background: #0d1f14; border: 1px solid #1e5c2a; color: #2ecc71; }
+  .value-result.no-value { background: #1f0d0d; border: 1px solid #5c1e1e; color: #e74c3c; }
+  .value-result.neutral { background: #1a1a0d; border: 1px solid #5c5c1e; color: #f39c12; }
+  .placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; color: #333; gap: 12px; text-align: center; }
+  .placeholder .icon { font-size: 3.5em; }
+  .history-item { background: #161920; border: 1px solid #2a2d3a; border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; cursor: pointer; }
+  .history-item:active { background: #1e2640; }
+  .history-item .hi-teams { font-size: 0.92em; font-weight: 600; color: #fff; margin-bottom: 4px; }
+  .history-item .hi-league { font-size: 0.75em; color: #555; margin-bottom: 8px; }
+  .history-item .hi-odds { display: flex; gap: 6px; }
+  .hi-pill { flex: 1; text-align: center; font-size: 0.72em; padding: 3px 0; border-radius: 5px; font-weight: bold; }
+  .hp1 { background: #1a3a5a; color: #5aacf5; } .hpx { background: #3a2e10; color: #f5c34a; } .hp2 { background: #3a1a1a; color: #f5614a; }
+  .loader { display: flex; align-items: center; gap: 10px; padding: 30px 20px; color: #555; font-size: 0.9em; justify-content: center; }
+  .loader-spin { width: 20px; height: 20px; border: 2px solid #333; border-top-color: #5aacf5; border-radius: 50%; animation: spin 0.8s linear infinite; }
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-thumb { background: #2a2d3a; border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div style="font-size:1.3em">⚽</div>
+  <h1>Analizator Meczów</h1>
+  <div class="spinner-inline" id="spinner"></div>
+  <div class="status" id="statusBar">Gotowy</div>
+</div>
+
+<div class="search-bar">
+  <input type="text" id="matchInput" placeholder="np. Barcelona vs Alaves, La Liga" onkeydown="if(event.key==='Enter'){this.blur();analyzeMatch();}" />
+  <button class="btn-analyze" id="btnAnalyze" onclick="analyzeMatch()">Analizuj</button>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('analysis')" id="tab-analysis"><span>📊</span> Analiza</div>
+  <div class="tab" onclick="switchTab('chat')" id="tab-chat"><span>💬</span> Czat AI</div>
+  <div class="tab" onclick="switchTab('history')" id="tab-history"><span>🕐</span> Historia</div>
+</div>
+
+<div class="panel active" id="panel-analysis">
+  <div class="placeholder" id="placeholder">
+    <div class="icon">⚽</div>
+    <p>Wpisz mecz i kliknij <strong>Analizuj</strong></p>
+    <p style="color:#2a2d3a;font-size:0.8em">Prawdziwe dane + analiza AI</p>
+  </div>
+  <div id="analysisContent" style="display:none"></div>
+</div>
+
+<div class="chat-panel" id="panel-chat">
+  <div class="chat-messages" id="chatMessages">
+    <div class="msg bot">Cześć! 👋 Używam <strong>prawdziwych danych</strong> z football-data.org.<br><br>Wpisz mecz i kliknij <strong>Analizuj</strong>!</div>
+  </div>
+  <div class="quick-qs">
+    <div class="qq" onclick="sendQuick('Jaki jest twój typ?')">🎯 Typ</div>
+    <div class="qq" onclick="sendQuick('Jakie są kontuzje?')">🏥 Kontuzje</div>
+    <div class="qq" onclick="sendQuick('Jaka jest forma drużyn?')">📈 Forma</div>
+    <div class="qq" onclick="sendQuick('Ile bramek padnie?')">⚽ Bramki</div>
+    <div class="qq" onclick="sendQuick('Jaka jest historia starć?')">📊 H2H</div>
+    <div class="qq" onclick="sendQuick('Czy warto obstawiać?')">💰 Value?</div>
+  </div>
+  <div class="chat-input-row">
+    <input type="text" id="chatInput" placeholder="Zadaj pytanie..." onkeydown="if(event.key==='Enter'){this.blur();sendChat();}" />
+    <button class="btn-send" id="btnSend" onclick="sendChat()">➤</button>
+  </div>
+</div>
+
+<div class="panel" id="panel-history">
+  <div id="historyContent">
+    <div class="placeholder"><div class="icon">🕐</div><p>Brak historii analiz.</p></div>
+  </div>
+</div>
+
+<script>
+const GROQ_KEY   = localStorage.getItem("GROQ_KEY") || "";
+const GROQ_MODEL = "openai/gpt-oss-20b";
+const GROQ_URL   = "https://api.groq.com/openai/v1/chat/completions";
+const FD_KEY     = localStorage.getItem("FD_KEY") || "";
+const FD_URL     = "https://api.football-data.org/v4";
+
+const LEAGUE_MAP = {
+  "premier league":"PL","premier":"PL","pl":"PL","anglia":"PL",
+  "la liga":"PD","laliga":"PD","pd":"PD","hiszpania":"PD",
+  "serie a":"SA","serie":"SA","sa":"SA","wlochy":"SA","włochy":"SA",
+  "bundesliga":"BL1","bl1":"BL1","niemcy":"BL1",
+  "ligue 1":"FL1","ligue":"FL1","fl1":"FL1","francja":"FL1",
+  "eredivisie":"DED","ded":"DED","holandia":"DED",
+  "primeira liga":"PPL","ppl":"PPL","portugalia":"PPL",
+};
+
+let currentMatch = null;
+let analysisHistory = [];
+let chatHistory = [];
+let realData = null;
+
+function switchTab(name) {
+  ["analysis","chat","history"].forEach(t => {
+    document.getElementById("tab-"+t).classList.toggle("active", t===name);
+    const el = document.getElementById("panel-"+t);
+    if (t==="chat") { el.style.display=(t===name)?"flex":"none"; el.classList.toggle("active",t===name); }
+    else { el.classList.toggle("active",t===name); }
+  });
+  if (name==="chat") { const m=document.getElementById("chatMessages"); m.scrollTop=m.scrollHeight; }
+}
+
+async function fdFetch(endpoint) {
+  try {
+    const res = await fetch(FD_URL+endpoint, { headers: {"X-Auth-Token": FD_KEY} });
+    if (res.ok) return await res.json();
+  } catch(e) {}
+
+  try {
+    const target = encodeURIComponent(FD_URL+endpoint);
+    const res = await fetch("https://api.allorigins.win/get?url="+target);
+    if (!res.ok) return null;
+    const data = await res.json();
+    return JSON.parse(data.contents);
+  } catch(e) {
+    return null;
+  }
+}
+
+async function findTeam(name) {
+  const data = await fdFetch("/teams?name="+encodeURIComponent(name)+"&limit=5");
+  if (!data||!data.teams||data.teams.length===0) return null;
+  const lname = name.toLowerCase();
+  for (const t of data.teams) {
+    if (t.name.toLowerCase().includes(lname)||t.shortName.toLowerCase().includes(lname)||lname.includes(t.shortName.toLowerCase())) return t;
+  }
+  return data.teams[0];
+}
+
+async function getStandings(code) { return await fdFetch("/competitions/"+code+"/standings"); }
+async function getTeamMatches(id) { return await fdFetch("/teams/"+id+"/matches?status=FINISHED&limit=5"); }
+
+function findInStandings(standings, teamId) {
+  if (!standings||!standings.standings) return null;
+  for (const g of standings.standings) for (const r of g.table) if (r.team.id===teamId) return r;
+  return null;
+}
+
+function calcForm(matches, teamId) {
+  if (!matches||!matches.matches) return [];
+  return matches.matches.slice(-5).map(m => {
+    const isHome = m.homeTeam.id===teamId;
+    const hs=m.score.fullTime.home, as=m.score.fullTime.away;
+    if (hs===null) return "?";
+    if (isHome) return hs>as?"W":hs===as?"D":"L";
+    else return as>hs?"W":as===hs?"D":"L";
+  });
+}
+
+async function fetchRealData(homeName, awayName, leagueHint) {
+  setStatus("Szukam drużyn...");
+  const [homeTeam, awayTeam] = await Promise.all([findTeam(homeName), findTeam(awayName)]);
+  let leagueCode = null;
+  if (leagueHint) { const h=leagueHint.toLowerCase(); for (const [k,v] of Object.entries(LEAGUE_MAP)) if (h.includes(k)) { leagueCode=v; break; } }
+  setStatus("Pobieram statystyki...");
+  const [homeMatches, awayMatches] = await Promise.all([
+    homeTeam?getTeamMatches(homeTeam.id):null,
+    awayTeam?getTeamMatches(awayTeam.id):null,
+  ]);
+  let standings = leagueCode ? await getStandings(leagueCode) : null;
+  const homeRow = homeTeam?findInStandings(standings,homeTeam.id):null;
+  const awayRow = awayTeam?findInStandings(standings,awayTeam.id):null;
+  const homeForm = homeTeam?calcForm(homeMatches,homeTeam.id):[];
+  const awayForm = awayTeam?calcForm(awayMatches,awayTeam.id):[];
+  const fmt = (matches,teamId) => {
+    if (!matches||!matches.matches) return "brak danych";
+    return matches.matches.slice(-5).map(m => {
+      const isHome=m.homeTeam.id===teamId, opp=isHome?m.awayTeam.name:m.homeTeam.name;
+      const hs=m.score.fullTime.home, as=m.score.fullTime.away;
+      const r=isHome?(hs>as?"W":hs===as?"D":"L"):(as>hs?"W":as===hs?"D":"L");
+      return r+" "+hs+"-"+as+" vs "+opp;
+    }).join(", ");
+  };
+  return { homeTeam, awayTeam, homeRow, awayRow, homeForm, awayForm, homeMatchesText:fmt(homeMatches,homeTeam?.id), awayMatchesText:fmt(awayMatches,awayTeam?.id) };
+}
+
+async function callGroq(sys, usr) {
+  const messages = [{role:"system",content:sys},...chatHistory,{role:"user",content:usr}];
+  const res = await fetch(GROQ_URL, { method:"POST", headers:{"Content-Type":"application/json","Authorization":"Bearer "+GROQ_KEY}, body:JSON.stringify({model:GROQ_MODEL,messages,temperature:0.7,max_tokens:2048}) });
+  if (!res.ok) { const e=await res.json(); throw new Error(e.error?.message||"Błąd API"); }
+  return (await res.json()).choices[0].message.content;
+}
+
+async function analyzeMatch() {
+  const input = document.getElementById("matchInput").value.trim();
+  if (!input) return;
+  setLoading(true); showLoader();
+  const parts = input.split(",");
+  const vsParts = parts[0].trim().split(/\s+vs\.?\s+/i);
+  const homeName = vsParts[0]?.trim()||parts[0].trim();
+  const awayName = vsParts[1]?.trim()||"";
+  const leagueHint = parts[1]?.trim()||"";
+  try {
+    realData = await fetchRealData(homeName, awayName, leagueHint);
+    setStatus("Analizuję z AI...");
+    const hs = realData.homeRow?`poz.${realData.homeRow.position} pkt.${realData.homeRow.points} W/R/P:${realData.homeRow.won}/${realData.homeRow.draw}/${realData.homeRow.lost} bramki:${realData.homeRow.goalsFor}:${realData.homeRow.goalsAgainst}`:"brak danych";
+    const as = realData.awayRow?`poz.${realData.awayRow.position} pkt.${realData.awayRow.points} W/R/P:${realData.awayRow.won}/${realData.awayRow.draw}/${realData.awayRow.lost} bramki:${realData.awayRow.goalsFor}:${realData.awayRow.goalsAgainst}`:"brak danych";
+    const prompt = `Przeanalizuj mecz: ${homeName} vs ${awayName}${leagueHint?" ("+leagueHint+")":""}.
+PRAWDZIWE DANE (football-data.org, sezon 2026/27):
+- ${homeName}: ${hs}, ostatnie mecze: ${realData.homeMatchesText}
+- ${awayName}: ${as}, ostatnie mecze: ${realData.awayMatchesText}
+Zwróć TYLKO JSON:
+{"home":"${homeName}","away":"${awayName}","league":"${leagueHint||"Liga"}","home_pct":liczba,"draw_pct":liczba,"away_pct":liczba,"predicted_score":"2-1","tip":"krótkie typowanie","risk":"NISKIE lub SREDNIE lub WYSOKIE","h2h":"historia 2-3 zdania","injuries_home":"kontuzje lub Brak danych","injuries_away":"kontuzje lub Brak danych","analysis":"analiza 4-5 zdań","btts":"TAK lub NIE","over25":"TAK lub NIE"}`;
+    const response = await callGroq("Jesteś ekspertem piłkarskim. Odpowiadasz po polsku. Zwróć TYLKO JSON.", prompt);
+    const jm = response.match(/\{[\s\S]*\}/);
+    if (!jm) throw new Error("Nieprawidłowa odpowiedź AI");
+    const data = JSON.parse(jm[0]);
+    data.realData = realData;
+    currentMatch = data;
+    analysisHistory.unshift(data);
+    updateHistory();
+    displayAnalysis(data);
+    chatHistory = [];
+    document.getElementById("chatMessages").innerHTML = "";
+    addBotMessage("✅ Analiza gotowa! **Prawdziwe dane** z football-data.org.\n\n🎯 Typ: **"+data.tip+"**\n\nZadaj mi pytanie!");
+    switchTab("analysis");
+  } catch(err) {
+    document.getElementById("placeholder").style.display="flex";
+    document.getElementById("analysisContent").style.display="none";
+    addBotMessage("Błąd: "+err.message);
+  }
+  setLoading(false);
+}
+
+function displayAnalysis(d) {
+  document.getElementById("placeholder").style.display="none";
+  const content = document.getElementById("analysisContent");
+  content.style.display="block";
+  const rd = d.realData;
+  const riskColor = d.risk==="NISKIE"?"#2ecc71":d.risk==="SREDNIE"?"#f39c12":"#e74c3c";
+  const formDots = (form) => (form||[]).map(f => "<div class='fd "+(f==="W"?"fw":f==="D"?"fdraw":f==="L"?"fl":"fq")+"'>"+f+"</div>").join("");
+
+  const buildStats = (name, row, form) => {
+    let b = "<div class='info-box'><h3>📊 "+name+"</h3>";
+    if (row) {
+      b += "<div class='info-row'><span class='k'>Pozycja</span><span class='v'>"+row.position+". miejsce</span></div>";
+      b += "<div class='info-row'><span class='k'>Punkty</span><span class='v'>"+row.points+" pkt</span></div>";
+      b += "<div class='info-row'><span class='k'>W / R / P</span><span class='v'>"+row.won+" / "+row.draw+" / "+row.lost+"</span></div>";
+      b += "<div class='info-row'><span class='k'>Bramki</span><span class='v'><span class='green'>"+row.goalsFor+"</span> : <span class='red'>"+row.goalsAgainst+"</span></span></div>";
+      const diff=row.goalsFor-row.goalsAgainst;
+      b += "<div class='info-row'><span class='k'>Bilans</span><span class='v "+(diff>=0?"green":"red")+"'>"+(diff>=0?"+":"")+diff+"</span></div>";
+    } else {
+      b += "<div style='font-size:0.83em;color:#555;padding:4px 0'>Brak danych z tabeli</div>";
+    }
+    b += "<div style='margin-top:8px;font-size:0.72em;color:#555'>Forma (ostatnie 5):</div>";
+    b += "<div class='form-dots'>"+formDots(form)+"</div>";
+    b += "</div>";
+    return b;
+  };
+
+  let html = "";
+  html += "<div class='match-card'><h2>"+d.home+" vs "+d.away+" <span class='data-badge'>✓ Dane live</span></h2><div class='match-meta'>"+d.league+"</div>";
+  html += "<div class='chances-row'>";
+  html += "<div class='chance-box c1'><div class='label'>"+d.home+"</div><div class='pct'>"+d.home_pct+"%</div><div class='bar-wrap'><div class='bar' style='width:"+d.home_pct+"%'></div></div></div>";
+  html += "<div class='chance-box cx'><div class='label'>Remis</div><div class='pct'>"+d.draw_pct+"%</div><div class='bar-wrap'><div class='bar' style='width:"+d.draw_pct+"%'></div></div></div>";
+  html += "<div class='chance-box c2'><div class='label'>"+d.away+"</div><div class='pct'>"+d.away_pct+"%</div><div class='bar-wrap'><div class='bar' style='width:"+d.away_pct+"%'></div></div></div>";
+  html += "</div></div>";
+  html += "<div class='verdict-box'><h3>🎯 Werdykt</h3><div class='verdict-tip'>"+d.tip+"</div><div class='verdict-sub'>Wynik: <strong>"+d.predicted_score+"</strong> · Obie: <strong>"+d.btts+"</strong> · Over 2.5: <strong>"+d.over25+"</strong> · Ryzyko: <strong style='color:"+riskColor+"'>"+d.risk+"</strong></div></div>";
+  html += "<div class='info-box'><h3>💰 Kursy sprawiedliwe vs STS</h3>";
+  html += "<div class='odds-grid'>";
+  html += "<div class='odds-cell'><div class='oc-label'>1 — "+d.home+"</div><div class='oc-fair'>"+pctToOdds(d.home_pct)+"</div><div class='oc-sub'>"+d.home_pct+"%</div></div>";
+  html += "<div class='odds-cell'><div class='oc-label'>X — Remis</div><div class='oc-fair'>"+pctToOdds(d.draw_pct)+"</div><div class='oc-sub'>"+d.draw_pct+"%</div></div>";
+  html += "<div class='odds-cell'><div class='oc-label'>2 — "+d.away+"</div><div class='oc-fair'>"+pctToOdds(d.away_pct)+"</div><div class='oc-sub'>"+d.away_pct+"%</div></div>";
+  html += "</div>";
+  html += "<div class='sts-section'><h4>🔍 Wpisz kursy z STS — sprawdź Value Bet</h4>";
+  html += "<div class='sts-inputs'><div class='sts-input-group'><label>Kurs 1</label><input type='number' id='sts1' placeholder='2.10' step='0.01' min='1' inputmode='decimal'></div>";
+  html += "<div class='sts-input-group'><label>Kurs X</label><input type='number' id='stsX' placeholder='3.40' step='0.01' min='1' inputmode='decimal'></div>";
+  html += "<div class='sts-input-group'><label>Kurs 2</label><input type='number' id='sts2' placeholder='3.20' step='0.01' min='1' inputmode='decimal'></div></div>";
+  html += "<button class='btn-check-value' onclick='checkValueBet("+d.home_pct+","+d.draw_pct+","+d.away_pct+")'>Sprawdź Value Bet</button>";
+  html += "<div class='value-result' id='valueResult'></div></div></div>";
+  html += buildStats(d.home, rd?.homeRow, rd?.homeForm||[]);
+  html += buildStats(d.away, rd?.awayRow, rd?.awayForm||[]);
+  html += "<div class='info-box'><h3>⚔️ H2H</h3><div style='font-size:0.85em;color:#bbb;line-height:1.7'>"+(d.h2h||"Brak danych")+"</div></div>";
+  html += "<div class='info-box'><h3>🏥 Kontuzje — "+d.home+"</h3><div style='font-size:0.85em;color:#aaa;line-height:1.6'>"+(d.injuries_home||"Brak danych")+"</div></div>";
+  html += "<div class='info-box'><h3>🏥 Kontuzje — "+d.away+"</h3><div style='font-size:0.85em;color:#aaa;line-height:1.6'>"+(d.injuries_away||"Brak danych")+"</div></div>";
+  html += "<div class='info-box'><h3>📝 Analiza AI</h3><div style='font-size:0.85em;color:#bbb;line-height:1.7'>"+(d.analysis||"Brak")+"</div></div>";
+  content.innerHTML = html;
+}
+
+function pctToOdds(pct) { if (!pct||pct<=0) return "-"; return (1/(pct/100)).toFixed(2); }
+
+function checkValueBet(pct1,pctX,pct2) {
+  const sts1=parseFloat(document.getElementById("sts1").value);
+  const stsX=parseFloat(document.getElementById("stsX").value);
+  const sts2=parseFloat(document.getElementById("sts2").value);
+  const result=document.getElementById("valueResult");
+  if (isNaN(sts1)&&isNaN(stsX)&&isNaN(sts2)) { result.style.display="block"; result.className="value-result neutral"; result.innerHTML="⚠️ Wpisz przynajmniej jeden kurs z STS."; return; }
+  const checks=[{label:"1 (gospodarz)",sts:sts1,fair:1/(pct1/100)},{label:"X (remis)",sts:stsX,fair:1/(pctX/100)},{label:"2 (gość)",sts:sts2,fair:1/(pct2/100)}];
+  let lines=[]; let bestValue=null; let bestDiff=0;
+  for (const c of checks) {
+    if (isNaN(c.sts)) continue;
+    const diff=((c.sts-c.fair)/c.fair*100).toFixed(1); const isVal=c.sts>c.fair;
+    lines.push((isVal?"✅":"❌")+" <strong>"+c.label+"</strong>: STS <strong>"+c.sts+"</strong> vs <strong>"+c.fair.toFixed(2)+"</strong> → <span style='color:"+(isVal?"#2ecc71":"#e74c3c")+"'>"+(isVal?"VALUE +":"")+diff+"%</span>");
+    if (isVal&&parseFloat(diff)>bestDiff) { bestDiff=parseFloat(diff); bestValue=c.label; }
+  }
+  result.style.display="block";
+  if (bestValue) { result.className="value-result value-bet"; result.innerHTML="<strong>🎯 VALUE BET!</strong><br><br>"+lines.join("<br>")+"<br><br><strong>Najlepszy: "+bestValue+" (+"+bestDiff.toFixed(1)+"%)</strong>"; }
+  else { result.className="value-result no-value"; result.innerHTML="<strong>⛔ Brak Value Bet</strong><br><br>"+lines.join("<br>")+"<br><br><span style='color:#aaa'>Kursy poniżej wartości.</span>"; }
+}
+
+async function sendChat() {
+  const input=document.getElementById("chatInput"); const msg=input.value.trim();
+  if (!msg) return; input.value=""; addUserMessage(msg); document.getElementById("btnSend").disabled=true;
+  const rd=currentMatch?.realData;
+  const ctx=currentMatch?`Mecz: ${currentMatch.home} vs ${currentMatch.away}. ${currentMatch.home} poz.${rd?.homeRow?.position||"?"} pkt.${rd?.homeRow?.points||"?"} forma:${(rd?.homeForm||[]).join("")}. ${currentMatch.away} poz.${rd?.awayRow?.position||"?"} pkt.${rd?.awayRow?.points||"?"} forma:${(rd?.awayForm||[]).join("")}. Typ: ${currentMatch.tip}. Analiza: ${currentMatch.analysis}`:"Brak analizowanego meczu.";
+  try {
+    chatHistory.push({role:"user",content:msg});
+    const response=await callGroq("Ekspert piłkarski. Odpowiadasz po polsku, krótko (max 4 zdania). Kontekst: "+ctx, msg);
+    chatHistory.push({role:"assistant",content:response});
+    addBotMessage(response);
+  } catch(err) { addBotMessage("Przepraszam, błąd. Spróbuj ponownie."); }
+  document.getElementById("btnSend").disabled=false;
+}
+
+function sendQuick(q) { document.getElementById("chatInput").value=q; switchTab("chat"); sendChat(); }
+
+function updateHistory() {
+  const el=document.getElementById("historyContent");
+  if (analysisHistory.length===0) { el.innerHTML="<div class='placeholder'><div class='icon'>🕐</div><p>Brak historii.</p></div>"; return; }
+  el.innerHTML=analysisHistory.map((m,i)=>"<div class='history-item' onclick='loadHistory("+i+")'><div class='hi-teams'>"+m.home+" vs "+m.away+"</div><div class='hi-league'>"+(m.league||"")+"</div><div class='hi-odds'><div class='hi-pill hp1'>1: "+m.home_pct+"%</div><div class='hi-pill hpx'>X: "+m.draw_pct+"%</div><div class='hi-pill hp2'>2: "+m.away_pct+"%</div></div></div>").join("");
+}
+
+function loadHistory(idx) { currentMatch=analysisHistory[idx]; displayAnalysis(currentMatch); switchTab("analysis"); }
+
+function setLoading(on) {
+  document.getElementById("btnAnalyze").disabled=on;
+  document.getElementById("btnAnalyze").textContent=on?"...":"Analizuj";
+  document.getElementById("spinner").classList.toggle("active",on);
+  setStatus(on?"Analizuję...":"Gotowy");
+}
+function showLoader() {
+  document.getElementById("placeholder").style.display="none";
+  const c=document.getElementById("analysisContent"); c.style.display="block";
+  c.innerHTML="<div class='loader'><div class='loader-spin'></div><span>Pobieram dane i analizuję...</span></div>";
+}
+function setStatus(msg) { document.getElementById("statusBar").textContent=msg; }
+function addBotMessage(text) {
+  const msgs=document.getElementById("chatMessages"); const div=document.createElement("div");
+  div.className="msg bot"; div.innerHTML=text.replace(/\*\*(.*?)\*\*/g,"<strong>$1</strong>").replace(/\n/g,"<br>");
+  msgs.appendChild(div); msgs.scrollTop=msgs.scrollHeight;
+}
+function addUserMessage(text) {
+  const msgs=document.getElementById("chatMessages"); const div=document.createElement("div");
+  div.className="msg user"; div.textContent=text; msgs.appendChild(div); msgs.scrollTop=msgs.scrollHeight;
+}
+
+// Start
+switchTab("analysis");
+if (!localStorage.getItem("GROQ_KEY") || !localStorage.getItem("FD_KEY")) {
+  showSetupScreen();
+}
+
+function showSetupScreen() {
+  document.getElementById("panel-analysis").innerHTML = `
+    <div style="padding:20px">
+      <div style="background:#161920;border:1px solid #2a2d3a;border-radius:12px;padding:20px;margin-bottom:12px">
+        <h2 style="font-size:1.1em;color:#fff;margin-bottom:8px">&#9881;&#65039; Konfiguracja</h2>
+        <p style="font-size:0.83em;color:#666;margin-bottom:16px">Wpisz klucze API raz - zostana zapamietane na tym urzadzeniu.</p>
+        <div style="margin-bottom:12px">
+          <label style="font-size:0.75em;color:#555;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:5px">Klucz Groq AI</label>
+          <input id="setupGroq" type="password" placeholder="gsk_..." style="width:100%;background:#0f1117;border:1px solid #2a2d3a;border-radius:8px;padding:10px 12px;color:#fff;font-size:0.88em;outline:none">
+        </div>
+        <div style="margin-bottom:16px">
+          <label style="font-size:0.75em;color:#555;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:5px">Klucz Football-Data.org</label>
+          <input id="setupFD" type="password" placeholder="0755d..." style="width:100%;background:#0f1117;border:1px solid #2a2d3a;border-radius:8px;padding:10px 12px;color:#fff;font-size:0.88em;outline:none">
+        </div>
+        <button onclick="saveKeys()" style="width:100%;background:#2a5abf;color:#fff;border:none;border-radius:8px;padding:12px;font-size:0.9em;font-weight:600;cursor:pointer">Zapisz i uruchom</button>
+      </div>
+      <div style="background:#1a1a0d;border:1px solid #3a3a1a;border-radius:10px;padding:12px 14px;font-size:0.78em;color:#888;line-height:1.6">
+        Klucze sa zapisywane tylko lokalnie na tym urzadzeniu. Nie sa nigdzie wysylane.<br><br>
+        Groq: console.groq.com/keys<br>
+        Football-Data: football-data.org
+      </div>
+    </div>`;
+}
+
+function saveKeys() {
+  const groq = document.getElementById("setupGroq").value.trim();
+  const fd   = document.getElementById("setupFD").value.trim();
+  if (!groq || !fd) { alert("Wpisz oba klucze!"); return; }
+  localStorage.setItem("GROQ_KEY", groq);
+  localStorage.setItem("FD_KEY", fd);
+  location.reload();
+}
+</script>
+</body>
+</html>
