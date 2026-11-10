@@ -562,7 +562,53 @@ function addUserMsg(text) {
   const msgs=document.getElementById("chatMsgs"); const div=document.createElement("div");
   div.className="msg user"; div.textContent=text; msgs.appendChild(div); msgs.scrollTop=msgs.scrollHeight;
 }
+
 switchTab("analysis");
+
+// Sprawdz klucze przy starcie
+if (!localStorage.getItem("GROQ_KEY") || !localStorage.getItem("TAVILY_KEY") || !localStorage.getItem("ODDS_KEY")) {
+  showSetup();
+}
+
+function showSetup() {
+  document.getElementById("panel-analysis").innerHTML = `
+  <div style="padding:16px">
+    <div style="background:#161920;border:1px solid #2a2d3a;border-radius:12px;padding:18px;margin-bottom:12px">
+      <h2 style="font-size:1em;color:#fff;margin-bottom:6px">&#9881; Konfiguracja</h2>
+      <p style="font-size:0.8em;color:#666;margin-bottom:14px">Wpisz klucze API raz — zostana zapamietane na tym urzadzeniu.</p>
+      <div style="margin-bottom:10px">
+        <label style="font-size:0.72em;color:#555;display:block;margin-bottom:4px">KLUCZ GROQ AI</label>
+        <input id="sg" type="password" placeholder="gsk_..." style="width:100%;background:#0f1117;border:1px solid #2a2d3a;border-radius:8px;padding:9px 11px;color:#fff;font-size:0.86em;outline:none">
+      </div>
+      <div style="margin-bottom:10px">
+        <label style="font-size:0.72em;color:#555;display:block;margin-bottom:4px">KLUCZ TAVILY (wyszukiwarka)</label>
+        <input id="st" type="password" placeholder="tvly-..." style="width:100%;background:#0f1117;border:1px solid #2a2d3a;border-radius:8px;padding:9px 11px;color:#fff;font-size:0.86em;outline:none">
+      </div>
+      <div style="margin-bottom:14px">
+        <label style="font-size:0.72em;color:#555;display:block;margin-bottom:4px">KLUCZ THE ODDS API (kursy bukmacherów)</label>
+        <input id="so" type="password" placeholder="0c8b..." style="width:100%;background:#0f1117;border:1px solid #2a2d3a;border-radius:8px;padding:9px 11px;color:#fff;font-size:0.86em;outline:none">
+      </div>
+      <button onclick="saveSetup()" style="width:100%;background:#2a5abf;color:#fff;border:none;border-radius:8px;padding:11px;font-size:0.88em;font-weight:600;cursor:pointer">Zapisz i uruchom</button>
+    </div>
+    <div style="background:#1a1a0d;border:1px solid #3a3a1a;border-radius:10px;padding:11px 13px;font-size:0.76em;color:#888;line-height:1.6">
+      Klucze zapisywane tylko lokalnie na tym urzadzeniu.<br><br>
+      Groq: <strong style="color:#aaa">console.groq.com/keys</strong><br>
+      Tavily: <strong style="color:#aaa">app.tavily.com</strong><br>
+      TheOddsAPI: <strong style="color:#aaa">the-odds-api.com</strong>
+    </div>
+  </div>`;
+}
+
+function saveSetup() {
+  const g = document.getElementById("sg").value.trim();
+  const t = document.getElementById("st").value.trim();
+  const o = document.getElementById("so").value.trim();
+  if (!g || !t || !o) { alert("Wpisz wszystkie 3 klucze!"); return; }
+  localStorage.setItem("GROQ_KEY", g);
+  localStorage.setItem("TAVILY_KEY", t);
+  localStorage.setItem("ODDS_KEY", o);
+  location.reload();
+}
 </script>
 </body>
 </html>
