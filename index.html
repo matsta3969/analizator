@@ -10,17 +10,17 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body { font-family: 'Segoe UI', sans-serif; background: #0f1117; color: #e0e0e0; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+@keyframes spin { to { transform: rotate(360deg); } }
 .topbar { background: #161920; border-bottom: 1px solid #2a2d3a; padding: 11px 16px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
 .topbar h1 { font-size: 0.98em; color: #fff; flex: 1; }
 .spinner { width: 14px; height: 14px; border: 2px solid #333; border-top-color: #5aacf5; border-radius: 50%; animation: spin 0.8s linear infinite; display: none; }
 .spinner.on { display: inline-block; }
-@keyframes spin { to { transform: rotate(360deg); } }
 .status { font-size: 0.72em; color: #555; }
 .search-bar { padding: 10px 12px; background: #161920; border-bottom: 1px solid #2a2d3a; display: flex; gap: 8px; flex-shrink: 0; }
 .search-bar input { flex: 1; background: #0f1117; border: 1px solid #2a2d3a; border-radius: 10px; padding: 10px 13px; color: #e0e0e0; font-size: 0.88em; outline: none; }
 .search-bar input:focus { border-color: #3a6abf; }
 .search-bar input::placeholder { color: #444; }
-.btn-analyze { background: #2a5abf; color: #fff; border: none; border-radius: 10px; padding: 10px 15px; font-size: 0.85em; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.btn-analyze { background: #2a5abf; color: #fff; border: none; border-radius: 10px; padding: 10px 15px; font-size: 0.88em; font-weight: 600; cursor: pointer; white-space: nowrap; }
 .btn-analyze:active { background: #1a4aaf; }
 .btn-analyze:disabled { background: #333; color: #666; }
 .tabs { display: flex; background: #161920; border-bottom: 1px solid #2a2d3a; flex-shrink: 0; }
@@ -47,23 +47,35 @@ body { font-family: 'Segoe UI', sans-serif; background: #0f1117; color: #e0e0e0;
 .btn-send { background: #2a5abf; color: #fff; border: none; border-radius: 10px; padding: 10px 16px; font-size: 0.95em; cursor: pointer; }
 .btn-send:active { background: #1a4aaf; }
 .btn-send:disabled { background: #333; color: #666; }
+/* KARTY */
 .card { background: #161920; border: 1px solid #2a2d3a; border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; }
 .card h2 { font-size: 1.08em; color: #fff; margin-bottom: 3px; }
 .card-meta { font-size: 0.76em; color: #555; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-.live-badge { background: #0d2a0d; border: 1px solid #1a5a1a; color: #2ecc71; font-size: 0.72em; padding: 2px 6px; border-radius: 8px; }
+.badge-live { background: #0d2a0d; border: 1px solid #1a5a1a; color: #2ecc71; font-size: 0.72em; padding: 2px 6px; border-radius: 8px; }
+.badge-odds { background: #0d1a2a; border: 1px solid #1a4a6a; color: #5aacf5; font-size: 0.72em; padding: 2px 6px; border-radius: 8px; }
 .chances-row { display: flex; gap: 8px; margin-bottom: 12px; }
 .cbox { flex: 1; background: #0f1117; border-radius: 10px; padding: 11px 6px; text-align: center; border: 1px solid #2a2d3a; }
-.cbox .clabel { font-size: 0.68em; color: #666; margin-bottom: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cbox .cpct { font-size: 1.35em; font-weight: bold; }
-.cbox .cbar-w { background: #2a2d3a; border-radius: 4px; height: 4px; margin-top: 6px; overflow: hidden; }
-.cbox .cbar { height: 4px; border-radius: 4px; }
-.c1 .cpct { color: #5aacf5; } .c1 .cbar { background: #5aacf5; }
-.cx .cpct { color: #f5c34a; } .cx .cbar { background: #f5c34a; }
-.c2 .cpct { color: #f5614a; } .c2 .cbar { background: #f5614a; }
+.cbox .cl { font-size: 0.68em; color: #666; margin-bottom: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cbox .cp { font-size: 1.35em; font-weight: bold; }
+.cbox .cbw { background: #2a2d3a; border-radius: 4px; height: 4px; margin-top: 6px; overflow: hidden; }
+.cbox .cb { height: 4px; border-radius: 4px; }
+.c1 .cp { color: #5aacf5; } .c1 .cb { background: #5aacf5; }
+.cx .cp { color: #f5c34a; } .cx .cb { background: #f5c34a; }
+.c2 .cp { color: #f5614a; } .c2 .cb { background: #f5614a; }
 .verdict { background: #0d1f14; border: 1px solid #1e5c2a; border-radius: 10px; padding: 13px 15px; margin-bottom: 12px; }
 .verdict .vl { font-size: 0.72em; color: #2ecc71; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
 .verdict .vtip { font-size: 0.98em; font-weight: bold; color: #fff; margin-bottom: 4px; }
 .verdict .vsub { font-size: 0.78em; color: #aaa; line-height: 1.7; }
+.odds-section { background: #0d1520; border: 1px solid #1a3a5a; border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+.odds-section h3 { font-size: 0.75em; color: #5aacf5; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+.market-box { background: #0f1117; border: 1px solid #2a2d3a; border-radius: 10px; padding: 12px; margin-bottom: 10px; }
+.market-box h4 { font-size: 0.72em; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 9px; }
+.market-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #1e2130; }
+.market-row:last-child { border-bottom: none; }
+.market-name { font-size: 0.82em; color: #aaa; }
+.market-odds { font-size: 0.95em; font-weight: bold; color: #fff; }
+.market-pct { font-size: 0.7em; color: #555; margin-left: 4px; }
+.best-odds-badge { background: #0d2a0d; color: #2ecc71; font-size: 0.65em; padding: 1px 5px; border-radius: 4px; margin-left: 3px; }
 .ibox { background: #0f1117; border: 1px solid #2a2d3a; border-radius: 10px; padding: 13px; margin-bottom: 10px; }
 .ibox h3 { font-size: 0.73em; color: #555; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 9px; }
 .irow { display: flex; justify-content: space-between; font-size: 0.82em; padding: 4px 0; border-bottom: 1px solid #1e2130; }
@@ -72,20 +84,14 @@ body { font-family: 'Segoe UI', sans-serif; background: #0f1117; color: #e0e0e0;
 .iv.r { color: #e74c3c; } .iv.g { color: #2ecc71; } .iv.y { color: #f39c12; }
 .form-dots { display: flex; gap: 5px; margin-top: 6px; flex-wrap: wrap; }
 .fd { width: 25px; height: 25px; border-radius: 50%; display:flex; align-items:center; justify-content:center; font-size:0.7em; font-weight:bold; }
-.fw { background:#27ae60; color:#fff; } .fdraw { background:#f39c12; color:#fff; } .fl { background:#e74c3c; color:#fff; } .fq { background:#333; color:#666; }
-.odds-grid { display: flex; gap: 8px; margin-bottom: 12px; }
-.ocell { flex: 1; background: #161920; border: 1px solid #2a2d3a; border-radius: 8px; padding: 9px 5px; text-align: center; }
-.ocell .ol { font-size: 0.66em; color: #666; margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.ocell .ov { font-size: 1.1em; font-weight: bold; color: #fff; }
-.ocell .os { font-size: 0.66em; color: #555; margin-top: 2px; }
-.sts-inputs { display: flex; gap: 7px; margin-bottom: 10px; }
-.sig { flex: 1; display: flex; flex-direction: column; gap: 3px; }
-.sig label { font-size: 0.66em; color: #666; text-align: center; }
-.sig input { background: #0f1117; border: 1px solid #2a2d3a; border-radius: 8px; padding: 8px 5px; color: #fff; font-size: 0.85em; text-align: center; outline: none; width: 100%; }
-.sig input:focus { border-color: #3a6abf; }
-.btn-value { width: 100%; background: #2a5abf; color: #fff; border: none; border-radius: 8px; padding: 11px; font-size: 0.86em; font-weight: 600; cursor: pointer; margin-bottom: 10px; }
-.btn-value:active { background: #1a4aaf; }
-.vres { border-radius: 8px; padding: 11px; font-size: 0.82em; line-height: 1.6; display: none; }
+.fw{background:#27ae60;color:#fff;} .fdraw{background:#f39c12;color:#fff;} .fl{background:#e74c3c;color:#fff;} .fq{background:#333;color:#666;}
+.vig { display: flex; flex-direction: column; gap: 3px; flex: 1; }
+.vig label { font-size: 0.68em; color: #666; text-align: center; }
+.vig input { background: #161920; border: 1px solid #2a2d3a; border-radius: 8px; padding: 8px 5px; color: #fff; font-size: 0.85em; text-align: center; outline: none; width: 100%; }
+.vig input:focus { border-color: #3a6abf; }
+.btn-vcheck { width: 100%; background: #2a5abf; color: #fff; border: none; border-radius: 8px; padding: 10px; font-size: 0.86em; font-weight: 600; cursor: pointer; margin-top: 8px; }
+.btn-vcheck:active { background: #1a4aaf; }
+.vres { border-radius: 8px; padding: 11px; font-size: 0.82em; line-height: 1.6; display: none; margin-top: 8px; }
 .vres.vb { background: #0d1f14; border: 1px solid #1e5c2a; color: #2ecc71; }
 .vres.nv { background: #1f0d0d; border: 1px solid #5c1e1e; color: #e74c3c; }
 .vres.nt { background: #1a1a0d; border: 1px solid #5c5c1e; color: #f39c12; }
@@ -97,9 +103,9 @@ body { font-family: 'Segoe UI', sans-serif; background: #0f1117; color: #e0e0e0;
 .hi-league { font-size: 0.73em; color: #555; margin-bottom: 7px; }
 .hi-odds { display: flex; gap: 5px; }
 .hp { flex: 1; text-align: center; font-size: 0.7em; padding: 3px 0; border-radius: 5px; font-weight: bold; }
-.hp1 { background: #1a3a5a; color: #5aacf5; } .hpx { background: #3a2e10; color: #f5c34a; } .hp2 { background: #3a1a1a; color: #f5614a; }
-.loader { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 40px 20px; color: #555; }
-.lspin { width: 28px; height: 28px; border: 3px solid #333; border-top-color: #5aacf5; border-radius: 50%; animation: spin 0.8s linear infinite; }
+.hp1{background:#1a3a5a;color:#5aacf5;} .hpx{background:#3a2e10;color:#f5c34a;} .hp2{background:#3a1a1a;color:#f5614a;}
+.loader { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 40px 20px; color: #555; }
+.lspin { width: 26px; height: 26px; border: 3px solid #333; border-top-color: #5aacf5; border-radius: 50%; animation: spin 0.8s linear infinite; }
 .lstep { font-size: 0.82em; color: #444; padding: 3px 0; }
 .lstep.done { color: #2ecc71; }
 .lstep.active { color: #5aacf5; }
@@ -117,7 +123,7 @@ body { font-family: 'Segoe UI', sans-serif; background: #0f1117; color: #e0e0e0;
 </div>
 
 <div class="search-bar">
-  <input type="text" id="matchInput" placeholder="np. Barcelona vs Alaves, La Liga"
+  <input type="text" id="matchInput" placeholder="np. Real Madrid vs Barcelona, La Liga"
     onkeydown="if(event.key==='Enter'){this.blur();analyzeMatch();}" />
   <button class="btn-analyze" id="btnAnalyze" onclick="analyzeMatch()">🔍</button>
 </div>
@@ -132,23 +138,23 @@ body { font-family: 'Segoe UI', sans-serif; background: #0f1117; color: #e0e0e0;
   <div class="placeholder" id="placeholder">
     <div class="ico">⚽</div>
     <p>Wpisz mecz i kliknij 🔍</p>
-    <p style="color:#2a2d3a;font-size:0.8em">Pobieram dane z internetu + AI</p>
+    <p style="color:#2a2d3a;font-size:0.8em">Kursy bukmacherów + dane live + AI</p>
   </div>
   <div id="analysisContent" style="display:none"></div>
 </div>
 
 <div class="chat-panel" id="panel-chat">
   <div class="chat-msgs" id="chatMsgs">
-    <div class="msg bot">Cześć! 👋<br><br>Wpisz mecz → <strong>szukam danych w internecie</strong> → analizuję i typuję.<br><br>Wpisz mecz i kliknij 🔍!</div>
+    <div class="msg bot">Cześć! 👋<br><br>1️⃣ <strong>Kursy</strong> z bukmacherów<br>2️⃣ <strong>Dane</strong> z internetu<br>3️⃣ <strong>AI</strong> oblicza szanse<br><br>Wpisz mecz i kliknij 🔍!</div>
   </div>
   <div class="quick-qs">
-    <div class="qq" onclick="sq('Jaki jest twój typ?')">🎯 Typ</div>
-    <div class="qq" onclick="sq('Jakie są kontuzje?')">🏥 Kontuzje</div>
-    <div class="qq" onclick="sq('Jaka jest forma?')">📈 Forma</div>
+    <div class="qq" onclick="sq('Jaki jest najlepszy zakład?')">🎯 Typ</div>
+    <div class="qq" onclick="sq('Czy jest value bet?')">💰 Value</div>
     <div class="qq" onclick="sq('Ile bramek padnie?')">⚽ Bramki</div>
+    <div class="qq" onclick="sq('Jaka jest forma?')">📈 Forma</div>
+    <div class="qq" onclick="sq('Jakie są kontuzje?')">🏥 Kontuzje</div>
     <div class="qq" onclick="sq('Historia H2H?')">📊 H2H</div>
-    <div class="qq" onclick="sq('Czy warto obstawiać?')">💰 Value?</div>
-    <div class="qq" onclick="sq('Jakie są składy?')">👕 Składy</div>
+    <div class="qq" onclick="sq('Który bukmacher daje najlepszy kurs?')">🏦 Kursy</div>
   </div>
   <div class="chat-inp">
     <input type="text" id="chatInput" placeholder="Zadaj pytanie..."
@@ -164,17 +170,38 @@ body { font-family: 'Segoe UI', sans-serif; background: #0f1117; color: #e0e0e0;
 </div>
 
 <script>
-const GROQ_KEY   = localStorage.getItem("GROQ_KEY") || "";
+// ============================================================
+// KONFIGURACJA — identyczna jak wersja desktop
+// ============================================================
+const GROQ_KEY   = localStorage.getItem("GROQ_KEY")||"";
 const GROQ_MODEL = "openai/gpt-oss-20b";
 const GROQ_URL   = "https://api.groq.com/openai/v1/chat/completions";
-const TAVILY_KEY = localStorage.getItem("TAVILY_KEY") || "";
+const TAVILY_KEY = localStorage.getItem("TAVILY_KEY")||"";
 const TAVILY_URL = "https://api.tavily.com/search";
+const ODDS_KEY   = localStorage.getItem("ODDS_KEY")||"";
+const ODDS_URL   = "https://api.the-odds-api.com/v4";
+
+const LEAGUE_MAP = {
+  "la liga":"soccer_spain_la_liga","la liga 2":"soccer_spain_segunda_division",
+  "segunda":"soccer_spain_segunda_division","segunda division":"soccer_spain_segunda_division",
+  "premier league":"soccer_epl","epl":"soccer_epl","serie a":"soccer_italy_serie_a",
+  "bundesliga":"soccer_germany_bundesliga","ligue 1":"soccer_france_ligue_one",
+  "eredivisie":"soccer_netherlands_eredivisie","championship":"soccer_efl_champ",
+  "champions league":"soccer_uefa_champs_league","europa league":"soccer_uefa_europa_league",
+  "copa del rey":"soccer_spain_copa_del_rey","league 1":"soccer_england_league1",
+  "league 2":"soccer_england_league2","nations league":"soccer_uefa_nations_league",
+  "nations":"soccer_uefa_nations_league",
+};
 
 let currentMatch = null;
 let analysisHistory = [];
 let chatHistory = [];
-let searchContext = "";
+let searchCtx = "";
+let oddsData = null;
 
+// ============================================================
+// ZAKŁADKI
+// ============================================================
 function switchTab(name) {
   ["analysis","chat","history"].forEach(t => {
     document.getElementById("tab-"+t).classList.toggle("active", t===name);
@@ -185,161 +212,272 @@ function switchTab(name) {
   if (name==="chat") { const m=document.getElementById("chatMsgs"); m.scrollTop=m.scrollHeight; }
 }
 
+// ============================================================
+// ODDS API
+// ============================================================
+async function fetchOdds(home, away, leagueHint) {
+  let sportKey = null;
+  if (leagueHint) {
+    const hint = leagueHint.toLowerCase();
+    for (const [k,v] of Object.entries(LEAGUE_MAP)) {
+      if (hint.includes(k)) { sportKey = v; break; }
+    }
+  }
+  const sportsToCheck = sportKey ? [sportKey] : [
+    "soccer_spain_la_liga","soccer_epl","soccer_italy_serie_a",
+    "soccer_germany_bundesliga","soccer_france_ligue_one",
+    "soccer_spain_segunda_division","soccer_netherlands_eredivisie",
+    "soccer_efl_champ","soccer_uefa_champs_league","soccer_uefa_europa_league",
+    "soccer_england_league1","soccer_england_league2","soccer_uefa_nations_league"
+  ];
+  const homeLow = home.toLowerCase();
+  const awayLow = away.toLowerCase();
+  for (const sport of sportsToCheck) {
+    try {
+      const res = await fetch(`${ODDS_URL}/sports/${sport}/odds/?apiKey=${ODDS_KEY}&regions=eu&markets=h2h,totals&oddsFormat=decimal`);
+      if (!res.ok) continue;
+      const matches = await res.json();
+      const match = matches.find(m => {
+        const ht = m.home_team.toLowerCase();
+        const at = m.away_team.toLowerCase();
+        return (ht.includes(homeLow)||homeLow.includes(ht.split(" ")[0])) &&
+               (at.includes(awayLow)||awayLow.includes(at.split(" ")[0]));
+      });
+      if (match) return { match, sport };
+    } catch(e) { continue; }
+  }
+  return null;
+}
+
+function oddsToProb(odds) { return (1/odds)*100; }
+function removeVig(probs) { const t=probs.reduce((a,b)=>a+b,0); return probs.map(p=>(p/t)*100); }
+
+function processOdds(match) {
+  const h2hOdds = {}, totalsOdds = {};
+  for (const bookie of match.bookmakers) {
+    const h2h = bookie.markets.find(m=>m.key==="h2h");
+    const tot = bookie.markets.find(m=>m.key==="totals");
+    if (h2h) for (const o of h2h.outcomes) {
+      if (!h2hOdds[o.name]) h2hOdds[o.name]=[];
+      h2hOdds[o.name].push({bookie:bookie.title,odds:o.price});
+    }
+    if (tot) for (const o of tot.outcomes) {
+      const key=`${o.name} ${o.point}`;
+      if (!totalsOdds[key]) totalsOdds[key]=[];
+      totalsOdds[key].push({bookie:bookie.title,odds:o.price,point:o.point});
+    }
+  }
+  const bestH2H = {}, bestTotals = {};
+  for (const [n,l] of Object.entries(h2hOdds)) bestH2H[n]=l.reduce((a,b)=>a.odds>b.odds?a:b);
+  for (const [k,l] of Object.entries(totalsOdds)) bestTotals[k]=l.reduce((a,b)=>a.odds>b.odds?a:b);
+  const homeTeam=match.home_team, awayTeam=match.away_team;
+  const hO=bestH2H[homeTeam]?.odds||2, dO=bestH2H["Draw"]?.odds||3, aO=bestH2H[awayTeam]?.odds||3;
+  const [homePct,drawPct,awayPct] = removeVig([oddsToProb(hO),oddsToProb(dO),oddsToProb(aO)]);
+  return {
+    homeTeam,awayTeam,
+    homePct:Math.round(homePct),drawPct:Math.round(drawPct),awayPct:Math.round(awayPct),
+    bestH2H,bestTotals,h2hOdds,totalsOdds,bookiesCount:match.bookmakers.length
+  };
+}
+
+// ============================================================
+// TAVILY
+// ============================================================
 async function tavilySearch(query) {
   const res = await fetch(TAVILY_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      api_key: TAVILY_KEY,
-      query,
-      search_depth: "advanced",
-      max_results: 5,
-      include_answer: true,
-      include_domains: ["flashscore.com","flashscore.pl","bbc.com","skysports.com",
-        "transfermarkt.com","sofascore.com","fotmob.com","espn.com","goal.com",
-        "meczyki.pl","sportowefakty.wp.pl"]
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      api_key:TAVILY_KEY,query,search_depth:"advanced",max_results:5,include_answer:true,
+      include_domains:["flashscore.com","sofascore.com","transfermarkt.com",
+        "bbc.com","skysports.com","fotmob.com","espn.com","goal.com","meczyki.pl"]
     })
   });
-  if (!res.ok) throw new Error("Tavily " + res.status);
+  if (!res.ok) return null;
   return await res.json();
 }
 
-async function gatherMatchData(home, away, league) {
+async function gatherData(home, away, league) {
   const queries = [
-    `${home} vs ${away} ${league} 2026 form table standings statistics`,
-    `${home} ${away} injuries squad news ${league} 2026`,
-    `${home} vs ${away} head to head h2h history`,
-    `${home} ${away} prediction analysis ${league}`,
+    `${home} ${away} ${league} 2026 form injuries squad recent matches`,
+    `${home} vs ${away} head to head h2h history goals`,
   ];
   const results = [];
   for (const q of queries) {
     try {
       const data = await tavilySearch(q);
-      if (data.results) results.push(...data.results.map(r=>r.content).filter(Boolean));
-      if (data.answer) results.push(data.answer);
+      if (data?.results) results.push(...data.results.map(r=>r.content).filter(Boolean));
+      if (data?.answer) results.push(data.answer);
     } catch(e) {}
   }
-  return results.join("\n\n---\n\n").slice(0, 12000);
+  return results.join("\n\n").slice(0,5000);
 }
 
+// ============================================================
+// GROQ
+// ============================================================
 async function callGroq(sys, usr, hist=[]) {
-  const messages = [{role:"system",content:sys},...hist,{role:"user",content:usr}];
+  const messages=[{role:"system",content:sys},...hist,{role:"user",content:usr}];
   const res = await fetch(GROQ_URL, {
     method:"POST",
     headers:{"Content-Type":"application/json","Authorization":"Bearer "+GROQ_KEY},
-    body:JSON.stringify({model:GROQ_MODEL,messages,temperature:0.5,max_tokens:2048})
+    body:JSON.stringify({model:GROQ_MODEL,messages,temperature:0,max_tokens:3000})
   });
   if (!res.ok) { const e=await res.json(); throw new Error(e.error?.message||"Groq błąd"); }
   return (await res.json()).choices[0].message.content;
 }
 
+// ============================================================
+// GŁÓWNA ANALIZA — identyczna logika jak desktop
+// ============================================================
 async function analyzeMatch() {
   const input = document.getElementById("matchInput").value.trim();
   if (!input) return;
-  setLoading(true); showLoader();
-  const parts = input.split(",");
-  const vsParts = parts[0].trim().split(/\s+vs\.?\s+/i);
-  const home = vsParts[0]?.trim()||parts[0].trim();
-  const away = vsParts[1]?.trim()||"?";
-  const league = parts[1]?.trim()||"";
+  setLoading(true);
+  showLoader(["Szukam meczu w bazach bukmacherów...","Pobieram dane z internetu...","AI analizuje szanse i typuje..."]);
+
+  const parts=input.split(",");
+  const vsParts=parts[0].trim().split(/\s+vs\.?\s+/i);
+  const home=vsParts[0]?.trim()||parts[0].trim();
+  const away=vsParts[1]?.trim()||"?";
+  const league=parts[1]?.trim()||"";
+
   try {
+    setStatus("Szukam kursów...");
+    stepDone(0);
+    const oddsResult = await fetchOdds(home, away, league);
+    let processed = null;
+    if (oddsResult) { processed = processOdds(oddsResult.match); oddsData = processed; }
+
     setStatus("Szukam w internecie...");
-    updateStep(1);
-    searchContext = await gatherMatchData(home, away, league);
-    setStatus("Analizuję z AI...");
-    updateStep(2);
+    stepDone(1);
+    searchCtx = await gatherData(home, away, league);
 
-    const sys = `Jesteś ekspertem od analizy meczów i typowania. Odpowiadasz po polsku. Zwróć TYLKO JSON:
-{"home":"${home}","away":"${away}","league":"${league||"Liga"}","home_pct":liczba,"draw_pct":liczba,"away_pct":liczba,"predicted_score":"2-1","tip":"typowanie","risk":"NISKIE/SREDNIE/WYSOKIE","confidence":liczba1-10,"home_form":["W","D","L","W","W"],"away_form":["L","W","D","L","W"],"home_position":"1. miejsce","home_points":"27 pkt","home_goals_for":"40","home_goals_against":"11","home_streak":"seria","away_position":"8. miejsce","away_points":"14 pkt","away_goals_for":"12","away_goals_against":"15","away_streak":"seria","injuries_home":"lista lub Brak","injuries_away":"lista lub Brak","h2h":"historia 3-4 zdania","key_facts":["fakt1","fakt2","fakt3"],"analysis":"analiza 5 zdań","btts":"TAK/NIE","over25":"TAK/NIE","over35":"TAK/NIE","best_bet":"najlepszy zakład z uzasadnieniem"}
+    setStatus("Analizuję...");
+    stepDone(2);
 
-DANE Z INTERNETU:\n` + searchContext;
+    const oddsContext = processed
+      ? `KURSY BUKMACHERSKIE (${processed.bookiesCount} bukmacherów, TheOddsAPI):
+- ${processed.homeTeam}: najlepszy kurs ${processed.bestH2H[processed.homeTeam]?.odds} (${processed.bestH2H[processed.homeTeam]?.bookie})
+- Remis: najlepszy kurs ${processed.bestH2H["Draw"]?.odds} (${processed.bestH2H["Draw"]?.bookie})
+- ${processed.awayTeam}: najlepszy kurs ${processed.bestH2H[processed.awayTeam]?.odds} (${processed.bestH2H[processed.awayTeam]?.bookie})
+- Implied probability: ${processed.homeTeam} ${processed.homePct}%, Remis ${processed.drawPct}%, ${processed.awayTeam} ${processed.awayPct}%
+- Over/Under: ${Object.keys(processed.bestTotals).join(", ")}`
+      : "Kursy bukmacherskie: nie znaleziono meczu w bazach";
 
-    const response = await callGroq(sys, `Przeanalizuj: ${home} vs ${away} ${league}`);
-    const jm = response.match(/\{[\s\S]*\}/);
-    if (!jm) throw new Error("Błąd parsowania AI");
-    const data = JSON.parse(jm[0]);
-    data.searchContext = searchContext;
+    const sys = `Jesteś ekspertem od analizy meczów piłkarskich i value betting. Odpowiadasz po polsku.
+Masz PRAWDZIWE kursy z bukmacherów. Implied probability to najdokładniejsza miara szans.
+Zwróć WYŁĄCZNIE JSON (bez tekstu przed/po):
+{"home":"...","away":"...","league":"...","home_pct":45,"draw_pct":27,"away_pct":28,"predicted_score":"1-1","tip":"konkretny typ","risk":"NISKIE","confidence":7,"home_form":["W","D","L","W","W"],"away_form":["L","W","D","L","W"],"home_streak":"seria","away_streak":"seria","injuries_home":"lista lub Brak","injuries_away":"lista lub Brak","h2h":"historia","key_facts":["fakt1","fakt2","fakt3"],"analysis":"analiza 4-5 zdań","btts":"TAK","over25":"TAK","over35":"NIE","best_bet":"najlepszy zakład z uzasadnieniem"}`;
+
+    const prompt = `Mecz: ${home} vs ${away} ${league}\n\n${oddsContext}\n\nDANE Z INTERNETU:\n${searchCtx}\n\nZwróć JSON.`;
+    const response = await callGroq(sys, prompt);
+    let jsonStr = response.match(/\{[\s\S]*\}/)?.[0];
+    if (!jsonStr) throw new Error("Błąd parsowania AI. Spróbuj ponownie.");
+    let data;
+    try { data = JSON.parse(jsonStr); }
+    catch(e) {
+      jsonStr = jsonStr.replace(/,\s*$/,"").replace(/,\s*"[^"]*":\s*$/,"");
+      if (!jsonStr.endsWith("}")) jsonStr += "}";
+      try { data = JSON.parse(jsonStr); }
+      catch(e2) { throw new Error("Niepoprawna odpowiedź AI. Spróbuj ponownie."); }
+    }
+
+    // Nadpisz szanse danymi z bukmacherów — zawsze dokładne
+    if (processed) {
+      data.home_pct = processed.homePct;
+      data.draw_pct = processed.drawPct;
+      data.away_pct = processed.awayPct;
+    }
+
+    data.oddsData = processed;
+    data.searchCtx = searchCtx;
     currentMatch = data;
     analysisHistory.unshift(data);
     updateHistory();
     displayAnalysis(data);
     chatHistory = [];
     document.getElementById("chatMsgs").innerHTML = "";
-    addBotMsg("✅ Gotowe! Zebrałem dane z internetu.\n\n🎯 **"+data.tip+"**\n\nPewność: **"+data.confidence+"/10** · Ryzyko: **"+data.risk+"**");
+    const src = processed ? `kursów z **${processed.bookiesCount} bukmacherów**` : "danych z internetu";
+    addBotMsg(`✅ Analiza gotowa! Na podstawie ${src}.\n\n🎯 **${data.tip}**\n\nPewność: **${data.confidence}/10** · Ryzyko: **${data.risk}**`);
     switchTab("analysis");
   } catch(err) {
     document.getElementById("placeholder").style.display="flex";
     document.getElementById("analysisContent").style.display="none";
-    addBotMsg("Błąd: "+err.message);
+    addBotMsg("❌ Błąd: "+err.message);
     switchTab("chat");
   }
   setLoading(false);
 }
 
+// ============================================================
+// WYŚWIETLANIE
+// ============================================================
 function displayAnalysis(d) {
   document.getElementById("placeholder").style.display="none";
   const content = document.getElementById("analysisContent");
   content.style.display="block";
+  const od = d.oddsData;
   const rC = d.risk==="NISKIE"?"#2ecc71":d.risk==="SREDNIE"?"#f39c12":"#e74c3c";
   const cC = d.confidence>=7?"#2ecc71":d.confidence>=5?"#f39c12":"#e74c3c";
-  const fd = (form) => (form||[]).map(f=>`<div class="fd ${{W:"fw",D:"fdraw",L:"fl"}[f]||"fq"}">${f}</div>`).join("");
-
+  const fd = f => `<div class="fd ${{W:"fw",D:"fdraw",L:"fl"}[f]||"fq"}">${f}</div>`;
   let html = "";
 
   html += `<div class="card"><h2>${d.home} vs ${d.away}</h2>
-  <div class="card-meta"><span>${d.league||""}</span><span class="live-badge">✓ Dane live</span></div>
+  <div class="card-meta"><span>${d.league||""}</span>
+  ${od?`<span class="badge-odds">📊 ${od.bookiesCount} bukm.</span>`:""}
+  <span class="badge-live">✓ Dane live</span></div>
   <div class="chances-row">
-    <div class="cbox c1"><div class="clabel">${d.home}</div><div class="cpct">${d.home_pct}%</div><div class="cbar-w"><div class="cbar" style="width:${d.home_pct}%"></div></div></div>
-    <div class="cbox cx"><div class="clabel">Remis</div><div class="cpct">${d.draw_pct}%</div><div class="cbar-w"><div class="cbar" style="width:${d.draw_pct}%"></div></div></div>
-    <div class="cbox c2"><div class="clabel">${d.away}</div><div class="cpct">${d.away_pct}%</div><div class="cbar-w"><div class="cbar" style="width:${d.away_pct}%"></div></div></div>
+    <div class="cbox c1"><div class="cl">${d.home}</div><div class="cp">${d.home_pct}%</div><div class="cbw"><div class="cb" style="width:${d.home_pct}%"></div></div></div>
+    <div class="cbox cx"><div class="cl">Remis</div><div class="cp">${d.draw_pct}%</div><div class="cbw"><div class="cb" style="width:${d.draw_pct}%"></div></div></div>
+    <div class="cbox c2"><div class="cl">${d.away}</div><div class="cp">${d.away_pct}%</div><div class="cbw"><div class="cb" style="width:${d.away_pct}%"></div></div></div>
   </div></div>`;
 
   html += `<div class="verdict"><div class="vl">🎯 Werdykt</div><div class="vtip">${d.tip}</div>
   <div class="vsub">Wynik: <strong>${d.predicted_score}</strong> · Obie: <strong>${d.btts}</strong> · Over 2.5: <strong>${d.over25}</strong> · Over 3.5: <strong>${d.over35}</strong><br>
   Ryzyko: <strong style="color:${rC}">${d.risk}</strong> · Pewność: <strong style="color:${cC}">${d.confidence}/10</strong></div></div>`;
 
-  if (d.best_bet) html += `<div class="ibox" style="background:#0d1a2a;border-color:#1a4a6a;margin-bottom:10px"><h3 style="color:#5aacf5">💡 Najlepszy zakład</h3><div style="font-size:0.83em;color:#bbb;line-height:1.6">${d.best_bet}</div></div>`;
+  if (od) {
+    const hO=od.bestH2H[od.homeTeam], dO=od.bestH2H["Draw"], aO=od.bestH2H[od.awayTeam];
+    html += `<div class="odds-section"><h3>📈 Kursy bukmacherskie</h3>
+    <div class="market-box"><h4>1X2 — Wynik meczu</h4>
+      <div class="market-row"><span class="market-name">1 — ${od.homeTeam}</span><span><span class="market-odds">${hO?.odds||"?"}</span><span class="market-pct">(${d.home_pct}%)</span>${hO?`<span class="best-odds-badge">${hO.bookie}</span>`:""}</span></div>
+      <div class="market-row"><span class="market-name">X — Remis</span><span><span class="market-odds">${dO?.odds||"?"}</span><span class="market-pct">(${d.draw_pct}%)</span>${dO?`<span class="best-odds-badge">${dO.bookie}</span>`:""}</span></div>
+      <div class="market-row"><span class="market-name">2 — ${od.awayTeam}</span><span><span class="market-odds">${aO?.odds||"?"}</span><span class="market-pct">(${d.away_pct}%)</span>${aO?`<span class="best-odds-badge">${aO.bookie}</span>`:""}</span></div>
+    </div>
+    <div class="market-box"><h4>Over/Under — Bramki</h4>
+      ${Object.entries(od.bestTotals).slice(0,6).map(([k,v])=>`<div class="market-row"><span class="market-name">${k}</span><span><span class="market-odds">${v.odds}</span><span class="best-odds-badge">${v.bookie}</span></span></div>`).join("")}
+    </div>
+    <div class="ibox" style="background:#0d1520;border-color:#1a3a5a">
+      <h3 style="color:#5aacf5">🔍 Sprawdź Value Bet vs STS</h3>
+      <div style="display:flex;gap:7px;margin-bottom:8px">
+        <div class="vig"><label>Kurs 1</label><input type="number" id="sts1" placeholder="${hO?.odds||2.0}" step="0.01" min="1" inputmode="decimal"></div>
+        <div class="vig"><label>Kurs X</label><input type="number" id="stsX" placeholder="${dO?.odds||3.0}" step="0.01" min="1" inputmode="decimal"></div>
+        <div class="vig"><label>Kurs 2</label><input type="number" id="sts2" placeholder="${aO?.odds||3.0}" step="0.01" min="1" inputmode="decimal"></div>
+      </div>
+      <button class="btn-vcheck" onclick="checkValue(${d.home_pct},${d.draw_pct},${d.away_pct})">Sprawdź Value Bet</button>
+      <div class="vres" id="vres"></div>
+    </div></div>`;
+  } else {
+    html += `<div class="ibox"><h3>💰 Sprawdź Value Bet vs STS</h3>
+    <p style="font-size:0.8em;color:#555;margin-bottom:10px">Kursy sprawiedliwe: 1=${p2o(d.home_pct)} · X=${p2o(d.draw_pct)} · 2=${p2o(d.away_pct)}</p>
+    <div style="display:flex;gap:7px;margin-bottom:8px">
+      <div class="vig"><label>Kurs 1</label><input type="number" id="sts1" placeholder="${p2o(d.home_pct)}" step="0.01" min="1" inputmode="decimal"></div>
+      <div class="vig"><label>Kurs X</label><input type="number" id="stsX" placeholder="${p2o(d.draw_pct)}" step="0.01" min="1" inputmode="decimal"></div>
+      <div class="vig"><label>Kurs 2</label><input type="number" id="sts2" placeholder="${p2o(d.away_pct)}" step="0.01" min="1" inputmode="decimal"></div>
+    </div>
+    <button class="btn-vcheck" onclick="checkValue(${d.home_pct},${d.draw_pct},${d.away_pct})">Sprawdź Value Bet</button>
+    <div class="vres" id="vres"></div></div>`;
+  }
 
-  html += `<div class="ibox"><h3>💰 Kursy sprawiedliwe vs STS</h3>
-  <div class="odds-grid">
-    <div class="ocell"><div class="ol">1—${d.home}</div><div class="ov">${p2o(d.home_pct)}</div><div class="os">${d.home_pct}%</div></div>
-    <div class="ocell"><div class="ol">X—Remis</div><div class="ov">${p2o(d.draw_pct)}</div><div class="os">${d.draw_pct}%</div></div>
-    <div class="ocell"><div class="ol">2—${d.away}</div><div class="ov">${p2o(d.away_pct)}</div><div class="os">${d.away_pct}%</div></div>
-  </div>
-  <h3 style="font-size:0.73em;color:#555;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:9px">🔍 Sprawdź Value Bet</h3>
-  <div class="sts-inputs">
-    <div class="sig"><label>Kurs 1</label><input type="number" id="sts1" placeholder="2.10" step="0.01" min="1" inputmode="decimal"></div>
-    <div class="sig"><label>Kurs X</label><input type="number" id="stsX" placeholder="3.40" step="0.01" min="1" inputmode="decimal"></div>
-    <div class="sig"><label>Kurs 2</label><input type="number" id="sts2" placeholder="3.20" step="0.01" min="1" inputmode="decimal"></div>
-  </div>
-  <button class="btn-value" onclick="checkValue(${d.home_pct},${d.draw_pct},${d.away_pct})">Sprawdź Value Bet</button>
-  <div class="vres" id="vres"></div></div>`;
-
+  if (d.best_bet) html += `<div class="ibox" style="background:#0d1a2a;border-color:#1a4a6a"><h3 style="color:#5aacf5">💡 Najlepszy zakład</h3><div style="font-size:0.83em;color:#bbb;line-height:1.6">${d.best_bet}</div></div>`;
   if (d.key_facts?.length) html += `<div class="ibox"><h3>⚡ Kluczowe fakty</h3>${d.key_facts.map(f=>`<div style="font-size:0.82em;color:#bbb;padding:4px 0;border-bottom:1px solid #1e2130">• ${f}</div>`).join("")}</div>`;
 
-  html += `<div class="ibox"><h3>📊 ${d.home}</h3>
-  <div class="irow"><span class="ik">Pozycja</span><span class="iv">${d.home_position||"?"}</span></div>
-  <div class="irow"><span class="ik">Punkty</span><span class="iv">${d.home_points||"?"}</span></div>
-  <div class="irow"><span class="ik">Strzelone</span><span class="iv g">${d.home_goals_for||"?"}</span></div>
-  <div class="irow"><span class="ik">Stracone</span><span class="iv r">${d.home_goals_against||"?"}</span></div>
-  <div class="irow"><span class="ik">Seria</span><span class="iv y">${d.home_streak||"?"}</span></div>
-  <div style="font-size:0.7em;color:#555;margin-top:7px">Forma:</div>
-  <div class="form-dots">${fd(d.home_form)}</div></div>`;
-
-  html += `<div class="ibox"><h3>📊 ${d.away}</h3>
-  <div class="irow"><span class="ik">Pozycja</span><span class="iv">${d.away_position||"?"}</span></div>
-  <div class="irow"><span class="ik">Punkty</span><span class="iv">${d.away_points||"?"}</span></div>
-  <div class="irow"><span class="ik">Strzelone</span><span class="iv g">${d.away_goals_for||"?"}</span></div>
-  <div class="irow"><span class="ik">Stracone</span><span class="iv r">${d.away_goals_against||"?"}</span></div>
-  <div class="irow"><span class="ik">Seria</span><span class="iv y">${d.away_streak||"?"}</span></div>
-  <div style="font-size:0.7em;color:#555;margin-top:7px">Forma:</div>
-  <div class="form-dots">${fd(d.away_form)}</div></div>`;
-
+  html += `<div class="ibox"><h3>📊 ${d.home}</h3><div class="irow"><span class="ik">Seria</span><span class="iv y">${d.home_streak||"?"}</span></div><div style="font-size:0.7em;color:#555;margin-top:7px">Forma:</div><div class="form-dots">${(d.home_form||[]).map(f=>fd(f)).join("")}</div></div>`;
+  html += `<div class="ibox"><h3>📊 ${d.away}</h3><div class="irow"><span class="ik">Seria</span><span class="iv y">${d.away_streak||"?"}</span></div><div style="font-size:0.7em;color:#555;margin-top:7px">Forma:</div><div class="form-dots">${(d.away_form||[]).map(f=>fd(f)).join("")}</div></div>`;
   html += `<div class="ibox"><h3>🏥 Kontuzje — ${d.home}</h3><div style="font-size:0.82em;color:#aaa;line-height:1.6">${d.injuries_home||"Brak"}</div></div>`;
   html += `<div class="ibox"><h3>🏥 Kontuzje — ${d.away}</h3><div style="font-size:0.82em;color:#aaa;line-height:1.6">${d.injuries_away||"Brak"}</div></div>`;
   html += `<div class="ibox"><h3>⚔️ H2H</h3><div style="font-size:0.83em;color:#bbb;line-height:1.7">${d.h2h||"Brak"}</div></div>`;
-  html += `<div class="ibox"><h3>📝 Analiza</h3><div style="font-size:0.83em;color:#bbb;line-height:1.7">${d.analysis||"Brak"}</div></div>`;
-
+  html += `<div class="ibox"><h3>📝 Analiza AI</h3><div style="font-size:0.83em;color:#bbb;line-height:1.7">${d.analysis||"Brak"}</div></div>`;
   content.innerHTML = html;
 }
 
@@ -351,9 +489,9 @@ function checkValue(p1,px,p2) {
   const s2=parseFloat(document.getElementById("sts2").value);
   const el=document.getElementById("vres");
   if (isNaN(s1)&&isNaN(sX)&&isNaN(s2)) { el.style.display="block"; el.className="vres nt"; el.innerHTML="⚠️ Wpisz przynajmniej jeden kurs."; return; }
-  const cs=[{l:"1 (gospod.)",s:s1,f:1/(p1/100)},{l:"X (remis)",s:sX,f:1/(px/100)},{l:"2 (gość)",s:s2,f:1/(p2/100)}];
+  const checks=[{l:"1",s:s1,f:1/(p1/100)},{l:"X",s:sX,f:1/(px/100)},{l:"2",s:s2,f:1/(p2/100)}];
   let lines=[]; let best=null; let bd=0;
-  for (const c of cs) {
+  for (const c of checks) {
     if (isNaN(c.s)) continue;
     const d=((c.s-c.f)/c.f*100).toFixed(1); const iv=c.s>c.f;
     lines.push(`${iv?"✅":"❌"} <strong>${c.l}</strong>: ${c.s} vs ${c.f.toFixed(2)} → <span style="color:${iv?"#2ecc71":"#e74c3c"}">${iv?"VALUE +":""}${d}%</span>`);
@@ -368,13 +506,14 @@ async function sendChat() {
   const inp=document.getElementById("chatInput"); const msg=inp.value.trim();
   if (!msg) return; inp.value=""; addUserMsg(msg); document.getElementById("btnSend").disabled=true;
   const thinking=addBotMsg("...","thinking");
-  const ctx=currentMatch?`Mecz: ${currentMatch.home} vs ${currentMatch.away}. Typ: ${currentMatch.tip}. Analiza: ${currentMatch.analysis}. Dane: ${(currentMatch.searchContext||"").slice(0,2000)}`:"Brak meczu.";
+  const od=currentMatch?.oddsData;
+  const ctx=currentMatch?`Mecz: ${currentMatch.home} vs ${currentMatch.away}. Szanse: ${currentMatch.home_pct}%/${currentMatch.draw_pct}%/${currentMatch.away_pct}%. ${od?`Kursy: 1=${od.bestH2H[od.homeTeam]?.odds} X=${od.bestH2H["Draw"]?.odds} 2=${od.bestH2H[od.awayTeam]?.odds}.`:""} Typ: ${currentMatch.tip}. Analiza: ${currentMatch.analysis}. Dane: ${(currentMatch.searchCtx||"").slice(0,2000)}`:"Brak meczu.";
   try {
     chatHistory.push({role:"user",content:msg});
-    const r=await callGroq("Ekspert piłkarski. Odpowiadasz po polsku, konkretnie (max 4 zdania). Kontekst: "+ctx, msg, chatHistory.slice(-6));
+    const r=await callGroq(`Ekspert piłkarski i value betting. Odpowiadasz po polsku, konkretnie (max 4 zdania). Kontekst: ${ctx}`, msg, chatHistory.slice(-6));
     chatHistory.push({role:"assistant",content:r});
     thinking.remove(); addBotMsg(r);
-  } catch(e) { thinking.remove(); addBotMsg("Błąd. Spróbuj ponownie."); }
+  } catch(e) { thinking.remove(); addBotMsg("Błąd: "+e.message); }
   document.getElementById("btnSend").disabled=false;
 }
 
@@ -383,25 +522,29 @@ function sq(q) { document.getElementById("chatInput").value=q; switchTab("chat")
 function updateHistory() {
   const el=document.getElementById("historyContent");
   if (!analysisHistory.length) { el.innerHTML="<div class='placeholder'><div class='ico'>🕐</div><p>Brak historii.</p></div>"; return; }
-  el.innerHTML=analysisHistory.map((m,i)=>`<div class="hi-item" onclick="loadHistory(${i})"><div class="hi-teams">${m.home} vs ${m.away}</div><div class="hi-league">${m.league||""} · pewność ${m.confidence}/10</div><div class="hi-odds"><div class="hp hp1">1: ${m.home_pct}%</div><div class="hp hpx">X: ${m.draw_pct}%</div><div class="hp hp2">2: ${m.away_pct}%</div></div></div>`).join("");
+  el.innerHTML=analysisHistory.map((m,i)=>`<div class="hi-item" onclick="loadHistory(${i})">
+    <div class="hi-teams">${m.home} vs ${m.away}</div>
+    <div class="hi-league">${m.league||""} ${m.oddsData?"· 📊":"· 🌐"} · pewność ${m.confidence}/10</div>
+    <div class="hi-odds"><div class="hp hp1">1: ${m.home_pct}%</div><div class="hp hpx">X: ${m.draw_pct}%</div><div class="hp hp2">2: ${m.away_pct}%</div></div>
+  </div>`).join("");
 }
 
 function loadHistory(i) { currentMatch=analysisHistory[i]; displayAnalysis(currentMatch); switchTab("analysis"); }
 
-let loaderStepsM = [];
-function showLoader() {
-  loaderStepsM = ["Szukam danych w internecie...","Zbieram formę, tabelę, kontuzje...","AI analizuje i typuje..."];
+let loaderData=[];
+function showLoader(steps) {
+  loaderData=steps.map(s=>({text:s,done:false}));
   document.getElementById("placeholder").style.display="none";
   const c=document.getElementById("analysisContent"); c.style.display="block";
-  c.innerHTML=`<div class="loader"><div class="lspin"></div><div>${loaderStepsM.map((s,i)=>`<div class="lstep ${i===0?"active":""}" id="ms${i}">○ ${s}</div>`).join("")}</div></div>`;
+  c.innerHTML=`<div class="loader"><div class="lspin"></div><div>${loaderData.map((s,i)=>`<div class="lstep ${i===0?"active":""}" id="ls${i}">○ ${s.text}</div>`).join("")}</div></div>`;
 }
-function updateStep(idx) {
-  const prev=document.getElementById("ms"+(idx-1));
-  const curr=document.getElementById("ms"+idx);
-  if (prev) { prev.className="lstep done"; prev.innerHTML="✓ "+loaderStepsM[idx-1]; }
-  if (curr) { curr.className="lstep active"; }
+function stepDone(i) {
+  loaderData[i].done=true;
+  const el=document.getElementById("ls"+i);
+  if (el) { el.className="lstep done"; el.innerHTML="✓ "+loaderData[i].text; }
+  const next=document.getElementById("ls"+(i+1));
+  if (next) { next.className="lstep active"; next.innerHTML="○ "+loaderData[i+1]?.text; }
 }
-
 function setLoading(on) {
   document.getElementById("btnAnalyze").disabled=on;
   document.getElementById("btnAnalyze").textContent=on?"⏳":"🔍";
@@ -419,45 +562,7 @@ function addUserMsg(text) {
   const msgs=document.getElementById("chatMsgs"); const div=document.createElement("div");
   div.className="msg user"; div.textContent=text; msgs.appendChild(div); msgs.scrollTop=msgs.scrollHeight;
 }
-
-// START
 switchTab("analysis");
-if (!localStorage.getItem("GROQ_KEY") || !localStorage.getItem("TAVILY_KEY")) {
-  showSetup();
-}
-
-function showSetup() {
-  document.getElementById("panel-analysis").innerHTML = `
-  <div style="padding:16px">
-    <div style="background:#161920;border:1px solid #2a2d3a;border-radius:12px;padding:18px;margin-bottom:12px">
-      <h2 style="font-size:1em;color:#fff;margin-bottom:6px">&#9881; Konfiguracja</h2>
-      <p style="font-size:0.8em;color:#666;margin-bottom:14px">Wpisz klucze API - zostana zapamietane na tym urzadzeniu.</p>
-      <div style="margin-bottom:10px">
-        <label style="font-size:0.72em;color:#555;display:block;margin-bottom:4px">KLUCZ GROQ AI</label>
-        <input id="sg" type="password" placeholder="gsk_..." style="width:100%;background:#0f1117;border:1px solid #2a2d3a;border-radius:8px;padding:9px 11px;color:#fff;font-size:0.86em;outline:none">
-      </div>
-      <div style="margin-bottom:14px">
-        <label style="font-size:0.72em;color:#555;display:block;margin-bottom:4px">KLUCZ TAVILY</label>
-        <input id="st" type="password" placeholder="tvly-..." style="width:100%;background:#0f1117;border:1px solid #2a2d3a;border-radius:8px;padding:9px 11px;color:#fff;font-size:0.86em;outline:none">
-      </div>
-      <button onclick="saveSetup()" style="width:100%;background:#2a5abf;color:#fff;border:none;border-radius:8px;padding:11px;font-size:0.88em;font-weight:600;cursor:pointer">Zapisz i uruchom</button>
-    </div>
-    <div style="background:#1a1a0d;border:1px solid #3a3a1a;border-radius:10px;padding:11px 13px;font-size:0.76em;color:#888;line-height:1.6">
-      Klucze zapisywane lokalnie na urzadzeniu.<br>
-      Groq: console.groq.com/keys<br>
-      Tavily: app.tavily.com
-    </div>
-  </div>`;
-}
-
-function saveSetup() {
-  const g = document.getElementById("sg").value.trim();
-  const t = document.getElementById("st").value.trim();
-  if (!g || !t) { alert("Wpisz oba klucze!"); return; }
-  localStorage.setItem("GROQ_KEY", g);
-  localStorage.setItem("TAVILY_KEY", t);
-  location.reload();
-}
 </script>
 </body>
 </html>
