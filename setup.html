@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Konfiguracja kluczy</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', sans-serif; background: #0f1117; color: #e0e0e0; padding: 20px; }
+h1 { font-size: 1.1em; color: #fff; margin-bottom: 6px; }
+p { font-size: 0.82em; color: #666; margin-bottom: 20px; }
+.field { margin-bottom: 14px; }
+label { font-size: 0.72em; color: #555; display: block; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+input { width: 100%; background: #161920; border: 1px solid #2a2d3a; border-radius: 8px; padding: 10px 12px; color: #fff; font-size: 0.88em; outline: none; }
+input:focus { border-color: #3a6abf; }
+button { width: 100%; background: #2a5abf; color: #fff; border: none; border-radius: 8px; padding: 12px; font-size: 0.9em; font-weight: 600; cursor: pointer; margin-top: 6px; }
+.ok { background: #0d1f14; border: 1px solid #1e5c2a; color: #2ecc71; border-radius: 8px; padding: 12px; font-size: 0.85em; display: none; margin-top: 12px; }
+.current { background: #161920; border: 1px solid #2a2d3a; border-radius: 8px; padding: 12px; font-size: 0.75em; color: #666; margin-bottom: 20px; line-height: 1.8; }
+.current strong { color: #aaa; }
+a { display: block; text-align: center; margin-top: 16px; color: #5aacf5; font-size: 0.85em; }
+</style>
+</head>
+<body>
+<h1>⚙️ Konfiguracja kluczy API</h1>
+<p>Wpisz swoje klucze — zostaną zapisane w przeglądarce.</p>
+
+<div class="current" id="current">Sprawdzam zapisane klucze...</div>
+
+<div class="field">
+  <label>Klucz Groq AI</label>
+  <input type="password" id="g" placeholder="gsk_...">
+</div>
+<div class="field">
+  <label>Klucz Tavily</label>
+  <input type="password" id="t" placeholder="tvly-...">
+</div>
+<div class="field">
+  <label>Klucz TheOddsAPI</label>
+  <input type="password" id="o" placeholder="0c8b...">
+</div>
+
+<button onclick="save()">💾 Zapisz klucze</button>
+<div class="ok" id="ok">✅ Klucze zapisane! Przekierowuję...</div>
+
+<a href="/">← Wróć do aplikacji</a>
+
+<script>
+// Pokaz aktualne klucze (pierwsze 8 znaków)
+const gk = localStorage.getItem("GROQ_KEY") || "";
+const tk = localStorage.getItem("TAVILY_KEY") || "";
+const ok = localStorage.getItem("ODDS_KEY") || "";
+document.getElementById("current").innerHTML =
+  "<strong>Groq:</strong> " + (gk ? gk.substring(0,12)+"..." : "❌ brak") + "<br>" +
+  "<strong>Tavily:</strong> " + (tk ? tk.substring(0,12)+"..." : "❌ brak") + "<br>" +
+  "<strong>OddsAPI:</strong> " + (ok ? ok.substring(0,12)+"..." : "❌ brak");
+
+// Wypelnij pola jesli sa juz zapisane
+if (gk) document.getElementById("g").value = gk;
+if (tk) document.getElementById("t").value = tk;
+if (ok) document.getElementById("o").value = ok;
+
+function save() {
+  const g = document.getElementById("g").value.trim();
+  const t = document.getElementById("t").value.trim();
+  const o = document.getElementById("o").value.trim();
+  if (!g || !t || !o) { alert("Wpisz wszystkie 3 klucze!"); return; }
+  localStorage.setItem("GROQ_KEY", g);
+  localStorage.setItem("TAVILY_KEY", t);
+  localStorage.setItem("ODDS_KEY", o);
+  document.getElementById("ok").style.display = "block";
+  setTimeout(() => { window.location.href = "/analizator/"; }, 2000);
+}
+</script>
+</body>
+</html>
